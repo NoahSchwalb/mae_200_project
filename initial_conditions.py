@@ -11,7 +11,7 @@ W_i_old 	= 	585000 	# [lbf]
 sigma_fuel 	=  	6.84 	# [lb/gal]
 V_fuel_max 	= 	35546	# [gal]
 b_back		= 	65 		# [ft]
-simga_wing 	= 	12 		# [lb/ft^2]
+sigma_wing 	= 	12 		# [lb/ft^2]
 n_new_eng 	=   2       # []
 W_avi 		= 	0		# [lbf]
 W_cell 		= 	6000 	# [lbf]
@@ -21,8 +21,9 @@ W_lab  		= 	3000 	# [lbf]
 AR_front = b_front**2/S_front
 AR_back = AR_front
 S_back = b_back**2/AR_back
+S = S_back + S_front
 
 # make sure these are correct, not sure yet
-#W_f = W_f_old + S_new*sigma_wing
-#W_i = W_i_old + n_new_eng*10000
+W_f = W_f_old + S*sigma_wing
+W_i = W_i_old + n_new_eng*10000
 

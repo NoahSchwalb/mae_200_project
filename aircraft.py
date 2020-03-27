@@ -14,3 +14,13 @@ class Aircraft():
         # Calculate the C_L at any given rho
         C_L = (2*(self.v_max.v_max/m.log(initial.W_i/initial.W_f))*m.sqrt(2/rho/initial.S)*(initial.W_i**0.5-initial.W_f**0.5))**2
         return C_L
+
+    def oswaldEfficiency(self,AR):
+        # Calculate the oswald efficiency factor for any given aspect ratio
+        oswald = 4.61*(1-0.045*AR**0.68)*(m.cos(initial.omega)**0.15)-3.1
+        return oswald
+
+    def C_D_i(self,C_L,e,AR):
+        # Calculate the C_D at any given coefficient of lift, oswald efficiency factor, and aspect ratio
+        C_D_i = C_L**2/(m.pi*e*AR)
+        return C_D_i

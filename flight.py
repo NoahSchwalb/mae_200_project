@@ -1,8 +1,7 @@
 import initial_conditions as initial
-from aircraft import Aircraft
 import math as m
 
-class Flight(Aircraft):
+class Flight():
 	"""
 	Module to define the flight segment of an aircraft mission
 
@@ -28,17 +27,18 @@ class Flight(Aircraft):
 	 6. rnge  - range of the aircraft for the flight
 	 
 	"""
-	def __init__(self,fuel,W_add,t_alt,rho_alt,v,rnge):
+	def __init__(self,fuel,W_add,t_alt,rho_alt,v,rnge,E):
 		state = State()
 		self.fuel 	 = 	fuel					 		   				   # [lbf] 			 # [SOW]
-		self.W_add 	 = 	W_add 										 	   # [lbf] 			 # [SOW]
+		self.W_add 	 = 	W_add 											   # [lbf] 			 # [SOW]
+		self.W_f 	 =  initial.W_f+W_add 								   # [lbf] 			 # [SOW]
 		self.t_alt 	 = 	t_alt									 		   # [R] 			 # [Table]
 		self.rho_alt = 	rho_alt 								 		   # [slugs/ft^3] 	 # [Table]
 		self.mu 	 = 	2.27*10**-8*((self.t_alt**1.5)/(self.t_alt+198.6)) # [lb-s/ft^2] 	 # [FS]
 		self.mach 	 = 	(state.gamma*state.R*self.t_alt)**0.5 			   # [ft/s] 		 # [FS]
 		self.v 	 	 = 	v*self.mach  							 	   	   # [ft/s] 		 # [SOW]
-		self.rnge 	 =  rnge											   # [mi] 			 # [SOW]
-
+		self.rnge 	 =  rnge										   	   # [mi] 			 # [SOW]
+		self.E 		 =  E										  		   # [hr]			 # [SOW]
 
 class State():
 	def __init__(self):

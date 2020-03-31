@@ -56,6 +56,10 @@ class State():
 		alt = v*m.sqrt(self.rho_sea/rho)
 		return alt
 
+
+
+# Old code
+# May work, no use in current state
 """
 ## Max velocity flight
 class v_max_flight(Aircraft):

@@ -27,6 +27,7 @@ class Aircraft():
         oswald = 4.61*(1-0.045*AR**0.68)*(m.cos(initial.omega)**0.15)-3.1
         return oswald
 
+
     def CDi(self,C_L,e,AR):
         # Calculate the C_D_i at any given coefficient of lift, oswald efficiency factor, and aspect ratio
         C_D_i = C_L**2/(m.pi*e*AR)

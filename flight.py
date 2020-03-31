@@ -27,6 +27,7 @@ class Flight():
 	 6. rnge  - range of the aircraft for the flight
 	 
 	"""
+  
 	def __init__(self,fuel,W_add,t_alt,rho_alt,v,rnge,E):
 		state = State()
 		self.fuel 	 = 	fuel					 		   				   # [lbf] 			 # [SOW]

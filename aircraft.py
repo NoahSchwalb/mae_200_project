@@ -1,5 +1,5 @@
 import initial_conditions as initial
-import flight_data as data
+import flight
 import math as m
 import numpy as np
 

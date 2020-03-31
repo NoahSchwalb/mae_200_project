@@ -1,7 +1,7 @@
 import initial_conditions as initial
-from aircraft import Aircraft
+import math as m
 
-class Flight(Aircraft):
+class Flight():
 	"""
 	Module to define the flight segment of an aircraft mission
 
@@ -27,18 +27,40 @@ class Flight(Aircraft):
 	 6. rnge  - range of the aircraft for the flight
 	 
 	"""
-	def __init__(self,fuel,W_add,t_alt,rho_alt,v,rnge):
+  
+	def __init__(self,fuel,W_add,t_alt,rho_alt,v,rnge,E):
+		state = State()
 		self.fuel 	 = 	fuel					 		   				   # [lbf] 			 # [SOW]
-		self.W_add 	 = 	W_add 										 	   # [lbf] 			 # [SOW]
+		self.W_add 	 = 	W_add 											   # [lbf] 			 # [SOW]
+		self.W_f 	 =  initial.W_f+W_add 								   # [lbf] 			 # [SOW]
 		self.t_alt 	 = 	t_alt									 		   # [R] 			 # [Table]
 		self.rho_alt = 	rho_alt 								 		   # [slugs/ft^3] 	 # [Table]
 		self.mu 	 = 	2.27*10**-8*((self.t_alt**1.5)/(self.t_alt+198.6)) # [lb-s/ft^2] 	 # [FS]
+		self.mach 	 = 	(state.gamma*state.R*self.t_alt)**0.5 			   # [ft/s] 		 # [FS]
+		self.v 	 	 = 	v*self.mach  							 	   	   # [ft/s] 		 # [SOW]
+		self.rnge 	 =  rnge										   	   # [mi] 			 # [SOW]
+		self.E 		 =  E										  		   # [hr]			 # [SOW]
+
+class State():
+	def __init__(self):
 		self.gamma 	 = 	1.6 									 		   # [-] 			 # [-]
 		self.R		 = 	1716 									 		   # [ft-lbf/slug-R] # [FS]
-		self.mach 	 = 	(self.gamma*self.R*self.t_alt)**0.5 			   # [ft/s] 		 # [FS]
-		self.v 	 	 = 	v*self.mach  							 	   	   # [ft/s] 		 # [SOW]
-		self.rnge 	 =  rnge											   # [mi] 			 # [SOW]
+		self.rho_sea = 	0.002377										   # [slugs/ft^3]	 # [FS]
+		self.t_sea 	 = 	518.67											   # [R] 			 # [FS]
+		self.mu_sea  = 	2.27*10**-8*((self.t_sea**1.5)/(self.t_sea+198.6)) # [lb-s/ft^2] 	 # [FS]
 
+	def vAlt2Sea(self,rho,v):
+		sea = v*m.sqrt(rho/self.rho_sea)
+		return sea
+
+	def vSea2Alt(self,rho,v):
+		alt = v*m.sqrt(self.rho_sea/rho)
+		return alt
+
+
+
+# Old code
+# May work, no use in current state
 """
 ## Max velocity flight
 class v_max_flight(Aircraft):

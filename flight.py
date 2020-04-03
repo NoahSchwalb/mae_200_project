@@ -33,13 +33,17 @@ class Flight():
 		self.fuel 	 = 	fuel					 		   				   # [lbf] 			 # [SOW]
 		self.W_add 	 = 	W_add 											   # [lbf] 			 # [SOW]
 		self.W_f 	 =  initial.W_f+W_add 								   # [lbf] 			 # [SOW]
+		self.W_i 	 =  self.W_f+self.fuel*initial.sigma_fuel# [lbf]			 # [SOW]
 		self.t_alt 	 = 	t_alt									 		   # [R] 			 # [Table]
 		self.rho_alt = 	rho_alt 								 		   # [slugs/ft^3] 	 # [Table]
 		self.mu 	 = 	2.27*10**-8*((self.t_alt**1.5)/(self.t_alt+198.6)) # [lb-s/ft^2] 	 # [FS]
 		self.mach 	 = 	(state.gamma*state.R*self.t_alt)**0.5 			   # [ft/s] 		 # [FS]
-		self.v 	 	 = 	v*self.mach  							 	   	   # [ft/s] 		 # [SOW]
+		if v != '':
+			self.v 	 	 = 	v*self.mach  							 	   	   # [ft/s] 		 # [SOW]
+		else:
+			self.v 	 =  v
 		self.rnge 	 =  rnge										   	   # [mi] 			 # [SOW]
-		self.E 		 =  E										  		   # [hr]			 # [SOW]
+		self.E 		 =  E										 	 	   # [hr]			 # [SOW]
 
 class State():
 	def __init__(self):

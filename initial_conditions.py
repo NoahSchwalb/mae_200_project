@@ -7,7 +7,7 @@ b_front     = 	169.8 	# [ft]
 S_front 	= 	3800 	# [ft^2]
 omega 		= 	35 		# [degrees]
 W_f_old 	= 	282500 	# [lbf]
-W_i_old 	= 	585000 	# [lbf]
+W_max_old 	= 	585000 	# [lbf]
 sigma_fuel 	=  	6.84 	# [lb/gal]
 V_fuel_max 	= 	35546	# [gal]
 b_back		= 	65 		# [ft]
@@ -25,4 +25,4 @@ S = S_back + S_front
 
 # aircraft weight after modifcations
 W_f = W_f_old + S_back*sigma_wing + 2*W_eng + W_avi + W_cell + W_lab
-W_i = W_i_old + n_new_eng*10000
+W_max = W_max_old + n_new_eng*100000

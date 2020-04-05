@@ -38,7 +38,7 @@ class Flight():
 		self.rho_alt = 	rho_alt 								 		   # [slugs/ft^3] 	 # [Table]
 		self.mu 	 = 	2.27*10**-8*((self.t_alt**1.5)/(self.t_alt+198.6)) # [lb-s/ft^2] 	 # [FS]
 		self.mach 	 = 	(state.gamma*state.R*self.t_alt)**0.5 			   # [ft/s] 		 # [FS]
-		if v != '':
+		if str(v) != '':
 			self.v 	 	 = 	v*self.mach  							 	   	   # [ft/s] 		 # [SOW]
 		else:
 			self.v 	 =  v
@@ -47,7 +47,7 @@ class Flight():
 
 class State():
 	def __init__(self):
-		self.gamma 	 = 	1.6 									 		   # [-] 			 # [-]
+		self.gamma 	 = 	1.4 									 		   # [-] 			 # [-]
 		self.R		 = 	1716 									 		   # [ft-lbf/slug-R] # [FS]
 		self.rho_sea = 	0.002377										   # [slugs/ft^3]	 # [FS]
 		self.t_sea 	 = 	518.67											   # [R] 			 # [FS]

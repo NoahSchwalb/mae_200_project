@@ -22,6 +22,14 @@ class Aircraft():
         C_L = 2*W_i/(rho*v**2*initial.S)
         return C_L
 
+    def CL_vector(self,rho,v,W_i,length):
+        # Calculate the C_L at any given rho
+        C_L = np.zeros(length)
+        C_L.tolist()
+        for i in range(0,length):
+            C_L[i] = 2*W_i/(rho*v[i]**2*initial.S)
+        return C_L
+
     def oswaldEfficiency(self,AR):
         # Calculate the oswald efficiency factor for any given aspect ratio
         oswald = 4.61*(1-0.045*(AR**0.68))*(m.cos(m.radians(initial.omega))**0.15)-3.1
@@ -33,9 +41,25 @@ class Aircraft():
         C_D_i = C_L**2/(m.pi*e*AR)
         return C_D_i
 
+    def CDi_vector(self,C_L,e,AR,length):
+        # Calculate the C_D_i at any given coefficient of lift, oswald efficiency factor, and aspect ratio
+        C_D_i = np.zeros(length)
+        C_D_i.tolist()
+        for i in range(0,length):
+            C_D_i[i] = C_L[i]**2/(m.pi*e*AR)
+        return C_D_i
+
     def CD(self,C_D_i,C_D_o):
         # Calculate the total C_D at any given C_D_i and C_D_o
         C_D = C_D_i+C_D_o
+        return C_D
+
+    def CD_vector(self,C_D_i,C_D_o,length):
+        # Calculate the total C_D at any given C_D_i and C_D_o
+        C_D = np.zeros(length)
+        C_D.tolist()
+        for i in range(0,length):
+            C_D[i] = C_D_i[i]+C_D_o[i]
         return C_D
 
     def ct(self,E,C_L,C_D,W_i,W_f):
@@ -44,6 +68,13 @@ class Aircraft():
 
     def endurance(self,c_t,C_L,C_D,W_i,W_f):
         E = 1/c_t*C_L/C_D*m.log(W_i/W_f)
+        return E
+
+    def endurance_vector(self,c_t,C_L,C_D,W_i,W_f,length):
+        E = np.zeros(length)
+        E.tolist()
+        for i in range(0,length):
+            E[i] = 1/c_t*C_L[i]/C_D[i]*m.log(W_i/W_f)
         return E
 
     def rnge(self,rho,S,c_t,C_L,C_D,W_i,W_f):

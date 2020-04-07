@@ -10,6 +10,19 @@ def mae_200_project():
     gamma = aircraft.state.gamma
     R = aircraft.state.R
 
+    fuel 	 = 	0.5*initial.V_fuel_max 						 	   # [lbf] 			 # [SOW]
+    W_add 	 = 	0 									 		   # [lb] 			 # [SOW]
+    t_alt 	 = 	418.97 									 		   # [R] 			 # [Table]
+    rho_alt  = 	0.00095801 										   # [slugs/ft^3] 	 # [Table]
+    mu 	     = 	2.27*10**-8*((t_alt**1.5)/(t_alt+198.6)) # [lb-s/ft^2] 	 # [FS]
+    mach	 = 	(gamma*R*t_alt)**0.5 			   # [] 			 # [FS]
+    E	     = 	''									 		   # [s] 			 # [SOW]
+    v 	     = 	0.801 								   # [ft/s] 			 # [SOW]
+    rnge     =  175.8
+
+    V_max_flight = Flight(fuel,W_add,t_alt,rho_alt,v,rnge,E)
+
+
     fuel 	 = 	1*initial.V_fuel_max 						 	   # [lbf] 			 # [SOW]
     W_add 	 = 	30000 									 		   # [lb] 			 # [SOW]
     t_alt 	 = 	465.23 									 		   # [R] 			 # [Table]
@@ -20,8 +33,10 @@ def mae_200_project():
     v 	     = 	0.4127 								   # [ft/s] 			 # [SOW]
     rnge     =  ''
 
-    
     E_max_flight = Flight(fuel,W_add,t_alt,rho_alt,v,rnge,E)
+
+    
+
     C_L = aircraft.CL(rho_alt,E_max_flight.v,E_max_flight.W_i)
     e = aircraft.oswaldEfficiency(initial.AR_front)
     C_D_i = aircraft.CDi(C_L,e,initial.AR_front)
@@ -34,24 +49,25 @@ def mae_200_project():
     #print(C_L**2/(m.pi*e*initial.AR_front))
     #print(C_D_o)
     #print(C_D)
-    print(E_max_flight.E)
-    print(1/E_max_flight.E*C_L/C_D*m.log(E_max_flight.W_i/E_max_flight.W_f))
-    print(c_t*3600)
+    #print(E_max_flight.E)
+    #print(1/E_max_flight.E*C_L/C_D*m.log(E_max_flight.W_i/E_max_flight.W_f))
+    #print(c_t*3600)
     v_sl = np.linspace(0,1.0,10)
     v_sl.tolist()
     length = len(v_sl)
+    C_D_o_sl = np.zeros(length)
+    for value in C_D_o_sl:
+        value = 0.0648
     W_add = initial.W_max-initial.V_fuel_max*initial.sigma_fuel-initial.W_f #additional weight needed to reach max possible weight
     E_sl_flight = Flight(fuel,W_add,aircraft.state.t_sea,aircraft.state.rho_sea,v_sl,'','')
     C_L_sl = aircraft.CL_vector(aircraft.state.rho_sea,E_sl_flight.v,E_sl_flight.W_i,length)
     C_D_i_sl = aircraft.CDi_vector(C_L_sl,e,initial.AR_front,length)
-    C_D_o_sl = C_D_i_sl
+    #C_D_o_sl = C_D_i_sl
+    #print(C_D_i_sl)
     C_D_sl = aircraft.CD_vector(C_D_i_sl,C_D_o_sl,length)
-    #print(C_L_sl)
-    
-    #print(aircraft.state.rho_sea)
-    #print(E_sl_flight.rho_alt)
-    #print(v_sl)
-    #print(E_sl_flight.v)
+    #C_D_sl = [0.09249552242870, 0.09249552242870, 0.09249552242870, 0.09249552242870, 0.09249552242870, 0.09249552242870, 0.09249552242870, 0.09249552242870, 0.09249552242870, 0.09249552242870]
+    #for i,value in enumerate(C_L_sl):
+    #    print('CL: ' + str(value) + '   CD: ' + str(C_D_sl[i]) + '    CL/CD: ' + str(value/C_D_sl[i]))
 
     #for i,value in enumerate(v_sl):
     #    print(2*E_sl_flight.W_i/(E_sl_flight.rho_alt*E_sl_flight.v[i]**2*initial.S))
@@ -62,13 +78,16 @@ def mae_200_project():
     #print(C_D_o_sl)
     #print(C_D_sl)
     E_sl = aircraft.endurance_vector(c_t,C_L_sl,C_D_sl,E_sl_flight.W_i,E_sl_flight.W_f,length)
-    for i,value in enumerate(v_sl):
-        print(1/c_t*C_L_sl[i]/C_D_sl[i]*m.log(E_sl_flight.W_i/E_sl_flight.W_f))
+    #for i,value in enumerate(v_sl):
+    #    print(1/c_t*C_L_sl[i]/C_D_sl[i]*m.log(E_sl_flight.W_i/E_sl_flight.W_f))
     
     #for i,value in enumerate(E_sl):
     #    if value == 'nan':
     #        E_sl[i] = 0
-    print(E_sl)
+    print(E_sl/3600)
+    #print(E_sl_flight.v)
+    #print(C_D_sl)
+    #print(C_L_sl)
     #plt.plot(v_sl,E_sl/3600)
     #plt.show()
     #print(C_L_sl[300])

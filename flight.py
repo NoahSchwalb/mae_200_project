@@ -42,7 +42,7 @@ class Flight():
 			self.v 	 	 = 	v*self.mach  							 	   	   # [ft/s] 		 # [SOW]
 		else:
 			self.v 	 =  v
-		self.rnge 	 =  rnge										   	   # [mi] 			 # [SOW]
+		self.rnge 	 =  rnge										   	   # [ft] 			 # [SOW]
 		self.E 		 =  E										 	 	   # [hr]			 # [SOW]
 
 class State():

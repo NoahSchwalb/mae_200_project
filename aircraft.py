@@ -36,7 +36,8 @@ class Aircraft():
         return oswald
 
     def CDo(self,rho,S,c_t,C_L,C_D_i,W_i,W_f,rnge):
-        C_D_o = 2*m.sqrt(2/rho/S)/c_t*C_L**0.5/rnge*(W_i**0.5-W_f**0.5)-C_D_i
+        # Calculate the C_D_o
+        C_D_o = 2*m.sqrt(2/(rho*S))/c_t*C_L**0.5/rnge*(W_i**0.5-W_f**0.5)-C_D_i
         return C_D_o
 
     def CDi(self,C_L,e,AR):
@@ -62,7 +63,7 @@ class Aircraft():
         C_D = np.zeros(length)
         C_D.tolist()
         for i in range(0,length):
-            C_D[i] = C_D_i[i]+C_D_o[i]
+            C_D[i] = C_D_i[i]+C_D_o
         return C_D
 
     def ct(self,E,C_L,C_D,W_i,W_f):

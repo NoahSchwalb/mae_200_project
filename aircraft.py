@@ -85,6 +85,13 @@ class Aircraft():
         rnge = 2*m.sqrt(2/rho/S)/c_t*m.sqrt(C_L)/C_D*(m.sqrt(W_i)-m.sqrt(W_f))
         return rnge
 
+    def rnge_vector(self,rho,S,c_t,C_L,C_D,W_i,W_f,length):
+        rnge = np.zeros(length)
+        rnge.tolist()
+        for i in range(0,length):
+            rnge[i] = 2*m.sqrt(2/rho/S)/c_t*m.sqrt(C_L[i])/C_D[i]*(m.sqrt(W_i)-m.sqrt(W_f))
+        return rnge
+
     #def enduranceSeaLevel(self,E,rho,v):
     #    v_sl = self.state.vAlt2Sea(rho,v)
     #    C_L = self.CL(rho,v)

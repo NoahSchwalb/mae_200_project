@@ -26,8 +26,12 @@ class Aircraft():
         # Calculate the C_L at any given rho
         C_L = np.zeros(length)
         C_L.tolist()
-        for i in range(0,length):
-            C_L[i] = 2*W_i/(rho*v[i]**2*initial.S)
+        if type(rho) == float:
+            for i in range(0,length):
+                C_L[i] = 2*W_i/(rho*v[i]**2*initial.S)
+        else :
+            for i in range(0,length):
+                C_L[i] = 2*W_i/(rho[i]*v[i]**2*initial.S)
         return C_L
 
     def oswaldEfficiency(self,AR):
@@ -70,6 +74,29 @@ class Aircraft():
         c_t = (1/E)*(C_L/C_D)*m.log(W_i/W_f)
         return c_t
 
+    def thrustRequired(self,rho,S,C_L,C_D,W_i,v):
+        T_r = np.sqrt(2*W_i**3*C_D**2/(rho*S*C_L**3))/v
+        return T_r
+
+    def thrustRequired_vector(self,rho,S,C_L,C_D,W_i,v,length):
+        T_r = np.zeros(length)
+        T_r.tolist()
+        if type(rho) == float:
+            for i,val in enumerate(v):
+                T_r[i] = np.sqrt(2*W_i**3*C_D**2/(rho*S*C_L**3))/val
+        else :
+            for i,val in enumerate(v):
+                T_r[i] = np.sqrt(2*W_i**3*C_D**2/(rho[i]*S*C_L**3))/val
+        return T_r
+
+    def thrustAvailable(self,W_i,C_L,C_D):
+        T_a = W_i*C_D/C_L
+        return T_a
+
+    def thrustAvailable2Alt(self,T_a,rho,rho_alt):
+        T_a_alt = T_a*rho/rho_alt
+        return T_a_alt
+
     def endurance(self,c_t,C_L,C_D,W_i,W_f):
         E = 1/c_t*C_L/C_D*m.log(W_i/W_f)
         return E
@@ -88,9 +115,25 @@ class Aircraft():
     def rnge_vector(self,rho,S,c_t,C_L,C_D,W_i,W_f,length):
         rnge = np.zeros(length)
         rnge.tolist()
-        for i in range(0,length):
-            rnge[i] = 2*m.sqrt(2/rho/S)/c_t*m.sqrt(C_L[i])/C_D[i]*(m.sqrt(W_i)-m.sqrt(W_f))
+        if type(rho) == float:
+            for i in range(0,length):
+                rnge[i] = 2*m.sqrt(2/rho/S)/c_t*m.sqrt(C_L[i])/C_D[i]*(m.sqrt(W_i)-m.sqrt(W_f))
+        else :
+            for i in range(0,length):
+                rnge[i] = 2*m.sqrt(2/rho[i]/S)/c_t*m.sqrt(C_L[i])/C_D[i]*(m.sqrt(W_i)-m.sqrt(W_f))
         return rnge
+
+    def powerRequired(self,rho,v,S,C_D_o):
+        P_r = 2*C_D_o*v**3*S*rho
+        return P_r
+
+    def powerRequired_vector(self,rho,v,S,C_D_o,length):
+        P_r = np.zeros(length)
+        P_r.tolist()
+        for i,value in enumerate(v):
+            P_r[i] = 2*C_D_o*S*value**3*rho
+        return P_r
+
 
     #def enduranceSeaLevel(self,E,rho,v):
     #    v_sl = self.state.vAlt2Sea(rho,v)

@@ -123,6 +123,17 @@ class Aircraft():
                 rnge[i] = 2*m.sqrt(2/rho[i]/S)/c_t*m.sqrt(C_L[i])/C_D[i]*(m.sqrt(W_i)-m.sqrt(W_f))
         return rnge
 
+    def powerAvailable(self,T_a,v):
+        P_a = T_a*v
+        return P_a
+
+    def powerAvailable_vector(self,T_a,v,length):
+        P_a = np.zeros(length)
+        P_a.tolist()
+        for i,val in enumerate(v):
+            P_a[i] = T_a*val
+        return P_a
+
     def powerRequired(self,rho,v,S,C_D_o):
         P_r = 2*C_D_o*v**3*S*rho
         return P_r

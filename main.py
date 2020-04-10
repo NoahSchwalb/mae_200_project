@@ -62,8 +62,8 @@ class mae_200_project():
 
         T_a_28k = aircraft.thrustAvailable(V_max_flight.W_i,C_L,C_D)
         T_a_sl = aircraft.thrustAvailable2Alt(T_a_28k,V_max_flight.rho_alt,aircraft.state.rho_sea)
-        print('T_a_28k: ' + str(T_a_28k))
-        print('T_a_sl: ' + str(T_a_sl))
+        #print('T_a_28k: ' + str(T_a_28k))
+        #print('T_a_sl: ' + str(T_a_sl))
 
         v_sl = np.linspace(0.1,1.0,10000)
         v_sl.tolist()
@@ -120,15 +120,6 @@ class mae_200_project():
 
         length = len(v)
         #rnge = aircraft.rnge_vector(rho,initial.S,c_t,C_L,C_D,W_i,W_f,length)
-        def maxRange(v,rho):
-            # I think there need to be np array inputs in order for this to work
-            W_i = sl_flight.W_i
-            W_f = sl_flight.W_f
-            C_L = aircraft.CL(rho,v,W_i)
-            #C_D_i = aircraft.CDi(C_L,e,initial.AR_front)
-            C_D_i = 3*C_D_o
-            C_D = aircraft.CD(C_D_i,C_D_o)
-            return 2*m.sqrt(2/rho/initial.S)/c_t*m.sqrt(C_L)/C_D*(m.sqrt(W_i)-m.sqrt(W_f))
 
         absolute_ceiling_rho = 0.0005680
         P_r = aircraft.powerRequired_vector(absolute_ceiling_rho,v,initial.S,C_D_o,length)
@@ -141,7 +132,7 @@ class mae_200_project():
         #print(P_r_max)
         #print(P_r_v_max)
         P_r_rho_min = absolute_ceiling_rho
-        rnge_max_global = maxRange(P_r_v_min,P_r_rho_min)
+        rnge_max_global = aircraft.maxRange(P_r_v_min,P_r_rho_min,C_D_o,c_t,sl_flight.W_i,sl_flight.W_f)
         print(rnge_max_global/5280)
         print(P_r_v_min)
         #fig = plt.figure()

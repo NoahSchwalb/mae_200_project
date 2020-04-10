@@ -112,6 +112,14 @@ class Aircraft():
         rnge = 2*m.sqrt(2/rho/S)/c_t*m.sqrt(C_L)/C_D*(m.sqrt(W_i)-m.sqrt(W_f))
         return rnge
 
+    def maxRange(self,v,rho,C_D_o,c_t,W_i,W_f):
+        #W_i = sl_flight.W_i
+        #W_f = sl_flight.W_f
+        C_L = self.CL(rho,v,W_i)
+        C_D_i = 3*C_D_o
+        C_D = self.CD(C_D_i,C_D_o)
+        return 2*m.sqrt(2/rho/initial.S)/c_t*m.sqrt(C_L)/C_D*(m.sqrt(W_i)-m.sqrt(W_f))
+
     def rnge_vector(self,rho,S,c_t,C_L,C_D,W_i,W_f,length):
         rnge = np.zeros(length)
         rnge.tolist()

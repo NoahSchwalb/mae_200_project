@@ -4,9 +4,20 @@ import initial_conditions as initial
 import math as m
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 class mae_200_project():
     def __init__(self):
+        #
+        # DON'T FORGET TO FIX ALL THE LIST/NUMPY ARRAY ISSUES
+        # NOAH WAS BEING STUPID AND CONVERTED THE NUMPY ARRAYS TO LISTS
+        # DON'T LET HIM BE STUPID
+        #
+
+
+        # Part 1
         aircraft = Aircraft()
         gamma = aircraft.state.gamma
         R = aircraft.state.R
@@ -22,7 +33,6 @@ class mae_200_project():
         rnge     =  175.8*5280
 
         V_max_flight = Flight(fuel,W_add,t_alt,rho_alt,v,rnge,E)
-
 
         fuel 	 = 	1*initial.V_fuel_max 						 	   # [lbf] 			 # [SOW]
         W_add 	 = 	30000 									 		   # [lb] 			 # [SOW]
@@ -44,11 +54,16 @@ class mae_200_project():
         C_D = aircraft.CD(C_D_i,C_D_o)
         c_t = aircraft.ct(E_max_flight.E,C_L,C_D,E_max_flight.W_i,E_max_flight.W_f)
 
-        # Find C_D_o using V_max flight
+        # Find C_D_o using V_max_flight
         C_L = aircraft.CL(V_max_flight.rho_alt,V_max_flight.v,V_max_flight.W_i)
         C_D_i = aircraft.CDi(C_L,e,initial.AR_front)
         C_D_o = aircraft.CDo(V_max_flight.rho_alt,initial.S,c_t,C_L,C_D_i,V_max_flight.W_i,V_max_flight.W_f,V_max_flight.rnge)
+        C_D = aircraft.CD(C_D_i,C_D_o)
 
+        T_a_28k = aircraft.thrustAvailable(V_max_flight.W_i,C_L,C_D)
+        T_a_sl = aircraft.thrustAvailable2Alt(T_a_28k,V_max_flight.rho_alt,aircraft.state.rho_sea)
+        print('T_a_28k: ' + str(T_a_28k))
+        print('T_a_sl: ' + str(T_a_sl))
 
         v_sl = np.linspace(0.1,1.0,10000)
         v_sl.tolist()
@@ -97,6 +112,65 @@ class mae_200_project():
         plt.legend()
         plt.savefig('max_R_sl.png')
         
+
+
+        # Part 2
+        v = np.linspace(50,1000,100)
+        #rho = np.linspace(0.0000035642,0.002377,100)
+
+        length = len(v)
+        #rnge = aircraft.rnge_vector(rho,initial.S,c_t,C_L,C_D,W_i,W_f,length)
+        def maxRange(v,rho):
+            # I think there need to be np array inputs in order for this to work
+            W_i = sl_flight.W_i
+            W_f = sl_flight.W_f
+            C_L = aircraft.CL(rho,v,W_i)
+            #C_D_i = aircraft.CDi(C_L,e,initial.AR_front)
+            C_D_i = 3*C_D_o
+            C_D = aircraft.CD(C_D_i,C_D_o)
+            return 2*m.sqrt(2/rho/initial.S)/c_t*m.sqrt(C_L)/C_D*(m.sqrt(W_i)-m.sqrt(W_f))
+
+        absolute_ceiling_rho = 0.0005680
+        P_r = aircraft.powerRequired_vector(absolute_ceiling_rho,v,initial.S,C_D_o,length)
+
+        P_r_min = 10000000000000000000000
+        for i,value in enumerate(P_r):
+            if value < P_r_min:
+                P_r_min = value
+                P_r_v_min = sl_flight.v[i]
+        #print(P_r_max)
+        #print(P_r_v_max)
+        P_r_rho_min = absolute_ceiling_rho
+        rnge_max_global = maxRange(P_r_v_min,P_r_rho_min)
+        print(rnge_max_global/5280)
+        print(P_r_v_min)
+        #fig = plt.figure()
+        #ax = fig.gca(projection='3d')
+
+        # Make data.
+        #X = rho
+        #Y = v
+        #Z = rnge
+        #X, Y = np.meshgrid(X, Y)
+        #R = 4/initial.S/c_t*np.sqrt(initial.W_max)*(np.sqrt(initial.W_max)-np.sqrt(initial.W_max-initial.V_fuel_max*initial.sigma_fuel))
+        #Z = R/np.sqrt(Y)/X/(C_D_o+(2*initial.W_max/(Y*X**2*initial.S))**2/np.pi/e/initial.AR_front)
+
+        # Plot the surface.
+        #surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+        #                    linewidth=0, antialiased=False)
+
+        # Customize the z axis.
+        #ax.set_zlim(-1.01, 1.01)
+        #ax.zaxis.set_major_locator(LinearLocator(10))
+        #ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+
+        # Add a color bar which maps values to colors.
+        #fig.colorbar(surf, shrink=0.5, aspect=5)
+
+        #plt.show()
+
+        
+        #print(rnge)
 
 
 

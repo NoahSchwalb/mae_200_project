@@ -94,7 +94,7 @@ class Aircraft():
         return T_a
 
     def thrustAvailable2Alt(self,T_a,rho,rho_alt):
-        T_a_alt = T_a*rho/rho_alt
+        T_a_alt = T_a*rho_alt/rho
         return T_a_alt
 
     def endurance(self,c_t,C_L,C_D,W_i,W_f):
@@ -153,6 +153,10 @@ class Aircraft():
             P_r[i] = 2*C_D_o*S*value**3*rho
         return P_r
 
+    def rho2Alt(self,rho):
+        # This equation is only accurate up to 36,000 ft
+        alt = 1/0.003566*self.state.t_sea*(1-(rho/self.state.rho_sea)**(1/4.2561))
+        return alt
 
     #def enduranceSeaLevel(self,E,rho,v):
     #    v_sl = self.state.vAlt2Sea(rho,v)

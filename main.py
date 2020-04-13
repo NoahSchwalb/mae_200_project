@@ -87,8 +87,8 @@ class mae_200_project():
                 R_v_max_sl = sl_flight.v[i]
 
 
-        print('The maximum endurance at sea level is ' + str(E_max_sl) + ' hr and the speed required to achieve that endurance is ' + str(E_v_max_sl) + ' ft/s.\n')
-        print('The maximum range at sea level is ' + str(R_max_sl/5280) + ' mi and the speed required to achieve that endurance is ' + str(R_v_max_sl) + ' ft/s.\n')
+        print('The maximum endurance at sea level is ' + str(E_max_sl/3600) + ' hr and the speed required to achieve that endurance is ' + str(E_v_max_sl) + ' ft/s.\n')
+        print('The maximum range at sea level is ' + str(R_max_sl/5280) + ' mi and the speed required to achieve that range is ' + str(R_v_max_sl) + ' ft/s.\n')
 
         """
         # Plot looks about right
@@ -111,12 +111,11 @@ class mae_200_project():
         plt.savefig('max_R_sl.png')
         """
 
-
-        # Part 2
-        length = 100
+        
+        # Calculate service and absolute ceiling, and max R/C at sea level
+        length = 3000
         v = np.linspace(50,1000,length)
-        #rho = np.linspace(0.00001,0.002377,length)
-        rho = np.linspace(0.0010620000000000002,0.001085909090909091,length)
+        rho = np.linspace(0.0001,0.002377,length)
         
         P_r = np.zeros((length,length))
         P_r_min = np.zeros(length)
@@ -125,6 +124,17 @@ class mae_200_project():
         R_C = np.zeros((length,length))
         R_C_max = np.zeros(length)
 
+        R_C_service_ceiling = np.zeros((length,length))
+        rho_service_ceiling = np.zeros((length,length))
+        v_service_ceiling = np.zeros((length,length))
+        max_range = np.zeros(length)
+        range_test = np.zeros((length,length))
+
+        R_C_absolute_ceiling = np.zeros((length,length))
+        rho_absolute_ceiling = np.zeros((length,length))
+        v_absolute_ceiling = np.zeros((length,length))
+
+        tolerance = 1e-2
         for i,rho_val in enumerate(rho):
             T_a = aircraft.thrustAvailable2Alt(T_a_sl,aircraft.state.rho_sea,rho_val)
             for j,v_val in enumerate(v):
@@ -133,68 +143,59 @@ class mae_200_project():
                 P_r[i][j] = np.sqrt(2*(sl_flight.W_i)**3*(C_D_o+C_D_i)**2/(rho_val*initial.S*C_L**3))
                 P_a[i][j] = T_a*v_val
                 R_C[i][j] = 60*(P_a[i][j]-P_r[i][j])/sl_flight.W_i
-            temp1 = 1e20
-            temp3 = 0
+                if R_C[i][j] >= 0:
+                    range_test[i][j] = aircraft.rnge(rho[i],initial.S,c_t,C_L,C_D_o+C_D_i,sl_flight.W_i,sl_flight.W_f)
+            temp = 0
             for k,val in enumerate(P_r[i]):
-                if val < temp1:
-                    temp1 = val
-                    temp2 = v[k]
-                if R_C[i][k] > temp3:
-                    temp3 = R_C[i][k]
-            P_r_min[i] = temp1
-            P_r_min_v[i] = temp2
-            R_C_max[i] = temp3
+                if R_C[i][k] > temp:
+                    temp = R_C[i][k]
+            R_C_max[i] = temp
+
+            for h,val in enumerate(R_C[i]):
+                if val <= 100+tolerance and val >= 100-tolerance:
+                    print('R/C is about 100')
+                    print('R_C: ' + str(val))
+                    print('rho: ' + str(rho[i]))
+                    print('v: ' + str(v[h]))
+                    print(str(aircraft.rho2Alt(rho[i])) + '\n')
+                    R_C_service_ceiling[i][h] = val
+                    rho_service_ceiling[i][h] = rho[h]
+                    v_service_ceiling[i][h] = v[h]
+                elif val <= tolerance and val >= -tolerance:
+                    print('R/C is about 0')
+                    print('R_C: ' + str(val))
+                    print('rho: ' + str(rho[i]))
+                    print('v: ' + str(v[h]))
+                    print(str(aircraft.rho2Alt(rho[i])) + '\n')
+                    R_C_absolute_ceiling[i][h] = val
+                    rho_absolute_ceiling[i][h] = rho[h]
+                    v_absolute_ceiling[i][h] = v[h]
+         
+        print(rho_absolute_ceiling)
+        print(R_C_absolute_ceiling)
+
+        max_range = 0
+        max_range_v = 0
+        max_range_rho = 0
         
-        #print(P_r_min)
-        #print(P_r_min_v)
-        print(R_C_max)
-        print(R_C_max[82])
-        print(rho[81])
-        print(rho[82]) #service ceiling density
-        print(aircraft.rho2Alt(rho[82])) #service ceiling altitude
+        for i,i_val in enumerate(range_test):
+            for j,j_val in enumerate(range_test[i]):
+                if j_val > max_range:
+                    max_range = j_val
+                    max_range_v = v[i]
+                    max_range_rho = rho[j]
 
-        #X,Y = np.meshgrid(v,rho)
-        #Z = P_r
-        #fig = plt.figure()
-        #ax = fig.gca(projection='3d')
-        #surf = ax.plot_surface(X,Y,Z)
-        #plt.show()
+        print('Range: ' + str(max_range/5280))
+        print('V: ' + str(max_range_v))
+        print('Rho: ' + str(max_range_rho))
+        index = np.argwhere(rho==max_range_rho)
+        print('Alt: ' + str(aircraft.rho2Alt(rho[int(index)])))
 
-        
-        #fig = plt.figure()
-        #ax = fig.gca(projection='3d')
-
-        # Make data.
-        #X = rho
-        #Y = v
-        #Z = rnge
-        #X, Y = np.meshgrid(X, Y)
-        #R = 4/initial.S/c_t*np.sqrt(initial.W_max)*(np.sqrt(initial.W_max)-np.sqrt(initial.W_max-initial.V_fuel_max*initial.sigma_fuel))
-        #Z = R/np.sqrt(Y)/X/(C_D_o+(2*initial.W_max/(Y*X**2*initial.S))**2/np.pi/e/initial.AR_front)
-
-        # Plot the surface.
-        #surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
-        #                    linewidth=0, antialiased=False)
-
-        # Customize the z axis.
-        #ax.set_zlim(-1.01, 1.01)
-        #ax.zaxis.set_major_locator(LinearLocator(10))
-        #ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-
-        # Add a color bar which maps values to colors.
-        #fig.colorbar(surf, shrink=0.5, aspect=5)
-
-        #plt.show()
-
-        
-        #print(rnge)
-
-
-
-
-
-
-    
+        X, Y = np.meshgrid(rho,v)
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        surf = ax.plot_surface(X,Y,range_test/5280)
+        plt.show()    
 
 if __name__ == "__main__":
     mae_200_project()

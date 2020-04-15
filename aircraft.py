@@ -157,16 +157,3 @@ class Aircraft():
         # This equation is only accurate up to 36,000 ft
         alt = 1/0.003566*self.state.t_sea*(1-(rho/self.state.rho_sea)**(1/4.2561))
         return alt
-
-    #def enduranceSeaLevel(self,E,rho,v):
-    #    v_sl = self.state.vAlt2Sea(rho,v)
-    #    C_L = self.CL(rho,v)
-    #    C_L_sl = self.CL(self.state.rho_sea,v_sl)
-    #    c_t = self.ct(rho,v)
-    #    c_t_sl = self.ct(self.state.rho_sea,v_sl)
-    #    E_sl = E*(C_L/C_L_sl)*(c_t/c_t_sl)
-    #    return E_sl
-
-    #def range(self,rho,ct,C_L,C_D,W_i,W_f):
-    #    range = 1
-    #    return range
